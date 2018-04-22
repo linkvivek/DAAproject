@@ -1,6 +1,6 @@
 
 class Emergency:
-
+    from pprint import pprint
 
     def __init__(self):
         import numpy as np
@@ -10,44 +10,54 @@ class Emergency:
 
         self.emergencyVehicles = pd.read_csv('EmergencyVehicles.csv')           #as pandas
         self.emergencyVehiclesSorted = sorted(set(self.emergencyVehicles['ZipCode']))
-        # self.emergencyVehiclesSorted1 = self.emergencyVehicles['ZipCode'].unique()
 
         self.distance = pd.read_csv('distance.csv')           #as pandas
         self.request = pd.read_csv('request.csv')           #as pandas
 
-        # emergencyVehiclesGrouped = emergencyVehicles.groupby(['ZipCode','Type'])['Type'].count()
-        # emergencyVehiclesGrouped = emergencyVehicles.groupby(['ZipCode','Type'],as_index = False).apply(list)
-        # emergencyVehiclesGrouped = emergencyVehicles.groupby(['ZipCode', 'Type'])
-        # emergencyVehicles1 = emergencyVehiclesGrouped.index.get_level_values('ZipCode')
+        # d = self.distance.loc[self.distance['ZipCode1'] == 64155]
+        # pprint(d)
+        # print(d['Distance'])
 
-
-        # pprint(emergencyVehiclesGrouped)
-        # aa = emergencyVehicles.loc[emergencyVehicles['ZipCode'] == 64151]
-        # pprint(aa.loc[aa['Type'] == 1])
-
-        # emergencyVehicles1 = emergencyVehicles.values       #pandas to array
-        # pprint(emergencyVehicles1)
-        # pprint(emergencyVehicles1[0][2])
-        # pprint(self.emergencyVehiclesSorted)
-        # pprint(self.emergencyVehiclesSorted1)
-        # for k, v in emergencyVehiclesGrouped[64151][0]:
-        #     print k
-        #     print v
-        #     print '===='
+        # print self.distance.loc[self.distance['ZipCode1'] == 64155]['Distance']
 
 
 
-    def checkAvailability(self, zipCode, type):
-        print zipCode
+
+    def checkAvailability(self, zipCode = 64156, type = 1):
+
         zipCodeIndex = self.emergencyVehiclesSorted.index(zipCode)
+
+        traverseLeftIndex = zipCodeIndex - 1
+        traverseRightIndex = zipCodeIndex + 1
+
+        traverseLeftZip = self.emergencyVehiclesSorted[traverseLeftIndex]
+        traverseRightZip = self.emergencyVehiclesSorted[traverseRightIndex]
+
+        distanceLeft = 0
+        distanceRight = 0
+
 
         for i in range(len(self.emergencyVehiclesSorted)):
             # print self.emergencyVehicles[zipCodeIndex]
-            aa = self.emergencyVehicles.loc[self.emergencyVehicles['ZipCode'] == zipCode]
-            if(len((self.emergencyVehicles.loc[self.emergencyVehicles['ZipCode'] == zipCode]).loc[aa['Type'] == type]) > 0):
-                bb = aa.loc[aa['Type'] == type]
-                print zipCode
-            #     print len(bb)
+
+            #traverse on the left direction
+            aa = self.emergencyVehicles.loc[self.emergencyVehicles['ZipCode'] == traverseLeftZip]  #get the zip code rows from emergencyVehicles
+            # print(aa)
+            if(len(aa) > 0 and len(aa.loc[aa['Type'] == type]) > 0):                                            #check if the requested vehicle is available
+                distanceLeft = self.distance.loc[self.distance['ZipCode1'] == traverseLeftZip]['Distance'] + distanceLeft    # if available then get the distance
+            else:
+                traverseLeftIndex = traverseLeftIndex - 1
+
+
+            # traverse on the right direction
+            bb = self.emergencyVehicles.loc[self.emergencyVehicles['ZipCode'] == traverseRightZip]  # get the zip code rows from emergencyVehicles
+            if (len(bb) > 0 and len(bb.loc[bb['Type'] == type]) > 0):  # check if the requested vehicle is available
+                distanceRight = self.distance.loc[self.distance['ZipCode2'] == traverseRightZip]['Distance'] + distanceRight  # if available then get the distance
+            else:
+                traverseRightIndex = traverseRightIndex + 1
+
+            print distanceLeft
+            print distanceRight
 
 
 emergency = Emergency()
