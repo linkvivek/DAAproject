@@ -35,6 +35,9 @@ class Vertex:
     def set_visited(self):
         self.visited = True
 
+    def set_not_visited(self):
+        self.visited = False
+
     def __str__(self):
         return str(self.id) + ' adjacent: ' + str([x.id for x in self.adjacent])
 

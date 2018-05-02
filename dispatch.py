@@ -4,6 +4,7 @@ from dijkstra import dijkstra
 def dispatchVihecles():
 
     g = Graph()
+    list = []
     for everyZip in g.emergencyVehiclesSorted:
         g.add_vertex(everyZip)
 
@@ -21,13 +22,15 @@ def dispatchVihecles():
     for k, v in g.request.iterrows():
         start = int(v['ZipCode'])
         type = int(v['VehicleType'])
-        print start
-        print type
-        dijkstra(g, g.get_vertex(start), type)
+        # print start
+        # print type
+        min = dijkstra(g, g.get_vertex(start), type)
+        # list.append(min)
 
+    print min
     target = g.get_vertex(64159)
     path = [target.get_id()]
-    shortest(target, path)
+    # shortest(target, path)
     # print 'The shortest path : %s' % (path[::-1])
 
 
