@@ -1,47 +1,33 @@
 from graph import Graph
 from dijkstra import dijkstra
+import pandas as pd
 
 def dispatchVihecles():
 
     g = Graph()
-    list = []
-    for everyZip in g.emergencyVehiclesSorted:
+    result = pd.DataFrame(columns=['ID', 'Type', 'zip', 'VehicleID', 'distance'])       # dataframe to store final results in
+
+    for everyZip in g.emergencyVehiclesSorted:                                          # adding each zipcodes as vetex
         g.add_vertex(everyZip)
 
 
-    for k, v in g.distance.iterrows():
+    for k, v in g.distance.iterrows():                                                  # creating the edges
         g.add_edge(v['ZipCode1'], v['ZipCode2'], v['Distance'])
 
-    print 'Graph data:'
-    for v in g:
-        for w in v.get_connections():
-            vid = v.get_id()
-            wid = w.get_id()
-            # print '( %s , %s, %3d)' % (vid, wid, v.get_weight(w))
-
-    for k, v in g.request.iterrows():
+    for k, v in g.request.iterrows():                                                   # iterating over each request to get the minimum distance using dijkstra algorithm
         start = int(v['ZipCode'])
         type = int(v['VehicleType'])
-        # print start
-        # print type
-        min = dijkstra(g, g.get_vertex(start), type)
-        # list.append(min)
 
-    print min
-    target = g.get_vertex(64159)
-    path = [target.get_id()]
-    # shortest(target, path)
-    # print 'The shortest path : %s' % (path[::-1])
+        minimumDistanceRow = dijkstra(g, g.get_vertex(start), type, k+1)
+        result = result.append(minimumDistanceRow)                                      # append the returned minimum distance row into a dataframe to display results
 
-
-def shortest(v, path):
-    ''' make shortest path from v.previous'''
-    if v.previous:
-        path.append(v.previous.get_id())
-        shortest(v.previous, path)
-    return
+    print result
 
 
 dispatchVihecles()      #calling the main function
 
+
+
+
+# Reference:
 # http://www.bogotobogo.com/python/python_Dijkstras_Shortest_Path_Algorithm.php
